@@ -5,9 +5,9 @@ define([], function () {
             var link = el.querySelector('a[href]');
             if (link) {
                 var iframe = document.createElement('iframe');
-                iframe.width = '100%';
-                iframe.height = '500px'; // default height
-                iframe.border = 'none';
+                iframe.style.width = '100%';
+                iframe.style.height = '500px'; // default height
+                iframe.style.border = 'none';
                 iframe.src = link.href;
 
                 // Listen for requests from the iframe
