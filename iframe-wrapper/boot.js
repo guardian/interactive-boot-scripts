@@ -6,14 +6,16 @@ define([], function () {
             if (link) {
                 var iframe = document.createElement('iframe');
                 iframe.style.width = '100%';
-                iframe.style.height = '500px'; // default height
                 iframe.style.border = 'none';
+                iframe.height = '500'; // default height
                 iframe.src = link.href;
 
-                // Listen for requests from the iframe
-                iframe.addEventListener('message', function(message) {
+                // Listen for requests from the window
+                window.addEventListener('message', function(event) {
+                    var message = JSON.parse(event.data); // IE 8 + 9 only support strings
+
                     if (message.type === 'set-height') {
-                        iframe.height = message.value + 'px';
+                        iframe.height = message.value;
                     } else if (message.type === 'navigate') {
                         document.location.href = message.value;
                     } else {
