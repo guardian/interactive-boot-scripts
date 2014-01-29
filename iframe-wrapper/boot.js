@@ -24,8 +24,8 @@ define([], function () {
                 }, false);
 
                 // Replace link with iframe
-                el.removeChild(link); // assumed to be direct child
-                el.appendChild(iframe);
+                // Note: link is assumed to be a direct child
+                el.replaceChild(iframe, link);
             } else {
                 console.warn('iframe-wrapper applied to element without any link');
             }
