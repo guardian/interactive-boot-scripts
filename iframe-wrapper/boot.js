@@ -12,6 +12,10 @@ define([], function () {
 
                 // Listen for requests from the window
                 window.addEventListener('message', function(event) {
+                    if (event.origin !== 'http://interactive.guim.co.uk') {
+                        return;
+                    }
+
                     var message = JSON.parse(event.data); // IE 8 + 9 only support strings
 
                     if (message.type === 'set-height') {
