@@ -16,7 +16,13 @@ define([], function () {
                         return;
                     }
 
-                    var message = JSON.parse(event.data); // IE 8 + 9 only support strings
+                    // IE 8 + 9 only support strings
+                    var message = JSON.parse(event.data);
+
+                    // Restrict message events to source iframe
+                    if (!message.href || message.href !== link.href) {
+                        return;
+                    }
 
                     if (message.type === 'set-height') {
                         iframe.height = message.value;
