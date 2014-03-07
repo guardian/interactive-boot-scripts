@@ -1,14 +1,13 @@
 define([], function () {
     return {
         boot: function (el, context, config, mediator) {
+            // Extract href of the first link in the content, if any
+            var iframe;
+            var link = el.querySelector('a[href]');
 
             function _postMessage(message) {
                 iframe.contentWindow.postMessage(JSON.stringify(message), '*');
             }
-
-            // Extract href of the first link in the content, if any
-            var iframe;
-            var link = el.querySelector('a[href]');
 
             if (link) {
                 iframe = document.createElement('iframe');
@@ -20,7 +19,7 @@ define([], function () {
                 // Listen for requests from the window
                 window.addEventListener('message', function(event) {
                     if (event.origin !== 'http://interactive.guim.co.uk') {
-                        //return;
+                        return;
                     }
 
                     // IE 8 + 9 only support strings
@@ -46,14 +45,12 @@ define([], function () {
                             _postMessage({
                                 'iframeTop':    iframe.getBoundingClientRect().top,
                                 'innerHeight':  window.innerHeight,
-                                'scrollY':      window.pageYOffset
+                                'pageYOffset':  window.pageYOffset
                             });
                             break;
                         default:
                            console.error('Received unknown action from iframe: ', message);
                     }
-
-
                 }, false);
 
                 // Replace link with iframe
