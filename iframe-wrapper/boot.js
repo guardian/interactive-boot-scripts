@@ -4,7 +4,7 @@ define([], function () {
             // Extract href of the first link in the content, if any
             var iframe;
             var link = el.querySelector('a[href]');
-            var matches = link.href.match(/(^https?\:\/\/[^\/:?#]+)(?:[\/:?#]|$)/i);
+            var matches = link.href.match(/(^https?\:\/\/[^\/?#]+)(?:[\/?#]|$)/i);
             var iframeDomain = matches && matches[1];
 
             function _postMessage(message) {
@@ -17,7 +17,7 @@ define([], function () {
                 iframe.style.border = 'none';
                 iframe.height = '500'; // default height
                 iframe.src = link.href;
-                iframe.className = link.className.replace(/\is-hidden\b/,''); // Show if hidden
+                iframe.className = link.className;
 
                 // Listen for requests from the window
                 window.addEventListener('message', function(event) {
