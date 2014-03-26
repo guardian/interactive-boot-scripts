@@ -26,7 +26,7 @@ define([], function () {
                     var message = JSON.parse(event.data);
 
                     // Restrict message events to source iframe
-                    if (!message.href || message.href !== link.href) {
+                    if (event.source !== iframe.contentWindow) {
                         return;
                     }
 
