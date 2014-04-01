@@ -69,7 +69,7 @@ define([], function () {
                             document.location.href = message.value;
                             break;
                         case 'scroll-to':
-                            window.scrollTo(message.x, message.y);
+                            window.scrollBy(message.x, message.y);
                             break;
                         case 'get-position':
                             _postMessage({
