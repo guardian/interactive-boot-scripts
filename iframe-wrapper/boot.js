@@ -42,9 +42,12 @@ define([], function () {
                 iframe = document.createElement('iframe');
                 iframe.style.width = '100%';
                 iframe.style.border = 'none';
-                iframe.height = '500'; // default height
+                iframe.style.overflow = 'hidden';
+                iframe.height = '150'; // default height so that no-script iframes aren't super high
                 iframe.src = link.href;
                 iframe.className = link.className;
+                iframe.seamless = 'seamless';
+                iframe.scrolling = 'no';
 
                 // Listen for requests from the window
                 window.addEventListener('message', function(event) {
