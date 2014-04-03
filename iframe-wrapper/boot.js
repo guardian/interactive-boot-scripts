@@ -18,17 +18,13 @@ define([], function () {
 
                 // Listen for requests from the window
                 window.addEventListener('message', function(event) {
-                    if (event.origin !== 'http://interactive.guim.co.uk') {
+                    if (event.origin !== 'http://interactive.guim.co.uk' ||
+                        event.source !== iframe.contentWindow) {
                         return;
                     }
 
                     // IE 8 + 9 only support strings
                     var message = JSON.parse(event.data);
-
-                    // Restrict message events to source iframe
-                    if (event.source !== iframe.contentWindow) {
-                        return;
-                    }
 
                     // Actions
                     switch (message.type) {
