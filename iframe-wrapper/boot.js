@@ -41,6 +41,7 @@ define([], function () {
                             _postMessage({
                                 'iframeTop':    iframe.getBoundingClientRect().top,
                                 'innerHeight':  window.innerHeight,
+                                'innerWidth':   window.innerWidth,
                                 'pageYOffset':  window.pageYOffset
                             });
                             break;
