@@ -18,8 +18,7 @@ define([], function () {
 
                 // Listen for requests from the window
                 window.addEventListener('message', function(event) {
-                    if (event.origin !== 'http://interactive.guim.co.uk' ||
-                        event.source !== iframe.contentWindow) {
+                    if (event.source !== iframe.contentWindow) {
                         return;
                     }
 
