@@ -36,8 +36,25 @@ define([], function () {
                         case 'scroll-to':
                             window.scrollTo(message.x, message.y);
                             break;
+                        case 'get-location':
+                            _postMessage({
+                                'id':       message.id,
+                                'type':     message.type,
+                                'hash':     window.location.hash,
+                                'host':     window.location.host,
+                                'hostname': window.location.hostname,
+                                'href':     window.location.href,
+                                'origin':   window.location.origin,
+                                'pathname': window.location.pathname,
+                                'port':     window.location.port,
+                                'protocol': window.location.protocol,
+                                'search':   window.location.search
+                            }, message.id);
+                            break;
                         case 'get-position':
                             _postMessage({
+                                'id':           message.id,
+                                'type':         message.type,
                                 'iframeTop':    iframe.getBoundingClientRect().top,
                                 'innerHeight':  window.innerHeight,
                                 'innerWidth':   window.innerWidth,
@@ -58,3 +75,4 @@ define([], function () {
         }
     };
 });
+
