@@ -61,8 +61,6 @@ define([], function () {
                                 'pageYOffset':  window.pageYOffset
                             });
                             break;
-                        default:
-                           console.error('Received unknown action from iframe: ', message);
                     }
                 }, false);
 
