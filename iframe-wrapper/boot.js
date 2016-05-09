@@ -99,9 +99,10 @@ define([], function () {
                             break;
                         case 'monitor-visibility':
                             // Send initial visibility value
+                            isVisible = _isVisible(message.threshold);
                             _postMessage({
                                 'type': 'visibility',
-                                'visible': _isVisible(message.threshold)
+                                'visible': isVisible
                             });
 
                             // Send updated visibility if and when it changes
