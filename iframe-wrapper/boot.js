@@ -6,6 +6,19 @@ define([], function () {
             var isVisible;
             var link = el.querySelector('a[href]');
 
+            // Calls func on trailing edge of the wait period
+            function _debounce(func, wait) {
+                var timeout;
+                return function() {
+                    var context = this, args = arguments;
+                    var later = function() {
+                        func.apply(context, args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            };
+
             function _postMessage(message) {
                 iframe.contentWindow.postMessage(JSON.stringify(message), '*');
             }
@@ -106,12 +119,12 @@ define([], function () {
                             });
 
                             // Send updated visibility if and when it changes
-                            window.addEventListener('scroll', function(ev) {
+                            window.addEventListener('scroll', _debounce(function(ev) {
                                 _postMessageOnVisibilityChange(message.threshold);
-                            });
-                            window.addEventListener('resize', function(ev) {
+                            }, 50));
+                            window.addEventListener('resize', _debounce(function(ev) {
                                 _postMessageOnVisibilityChange(message.threshold);
-                            });
+                            }, 50));
                             break;
                     }
                 }, false);
