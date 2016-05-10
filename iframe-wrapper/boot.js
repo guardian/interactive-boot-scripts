@@ -23,41 +23,6 @@ define([], function () {
                 iframe.contentWindow.postMessage(JSON.stringify(message), '*');
             }
 
-            // threshold represents the fraction of the element that must be in the
-            // viewport before it is considered visible.
-            // e.g. 0.5 means that half the height or width must be in the viewport
-            //      1 means that the entire element must be in the viewport
-            //      (defaults to 1)
-            function _isVisible(threshold) {
-                var threshold = threshold || 1;
-                var box = el.getBoundingClientRect();
-                var width = box.right - box.left;
-                var height = box.bottom - box.top;
-                var windowHeight = window.innerHeight || document.documentElement.clientHeight;
-                var windowWidth = window.innerWidth || document.documentElement.clientWidth;
-                return (
-                    box.left >= -(width * (1 - threshold)) &&
-                    box.top >= -(height * (1 - threshold)) &&
-                    box.right <= windowWidth + (width * (1 - threshold)) &&
-                    box.bottom <= windowHeight + (height * (1 - threshold))
-                );
-            }
-
-            function _hasVisibilityChanged(threshold) {
-                var wasVisible = isVisible;
-                isVisible = _isVisible(threshold);
-                return (wasVisible !== isVisible);
-            }
-
-            function _postMessageOnVisibilityChange(threshold) {
-                if (_hasVisibilityChanged(threshold)) {
-                    _postMessage({
-                        'type': 'visibility',
-                        'visible': isVisible
-                    });
-                }
-            }
-
             if (link) {
                 iframe = document.createElement('iframe');
                 iframe.style.width = '100%';
@@ -73,6 +38,22 @@ define([], function () {
 
                     // IE 8 + 9 only support strings
                     var message = JSON.parse(event.data);
+
+                    function _postPositionMessage(subscribe) {
+                        var iframeBox = iframe.getBoundingClientRect();
+                        _postMessage({
+                            'id':           message.id,
+                            'type':         message.type,
+                            'subscribe':    !!subscribe,
+                            'iframeTop':    iframeBox.top,
+                            'iframeRight':  iframeBox.right,
+                            'iframeBottom': iframeBox.bottom,
+                            'iframeLeft':   iframeBox.left,
+                            'innerHeight':  window.innerHeight,
+                            'innerWidth':   window.innerWidth,
+                            'pageYOffset':  window.pageYOffset,
+                        });
+                    }
 
                     // Actions
                     switch (message.type) {
@@ -101,29 +82,18 @@ define([], function () {
                             }, message.id);
                             break;
                         case 'get-position':
-                            _postMessage({
-                                'id':           message.id,
-                                'type':         message.type,
-                                'iframeTop':    iframe.getBoundingClientRect().top,
-                                'innerHeight':  window.innerHeight,
-                                'innerWidth':   window.innerWidth,
-                                'pageYOffset':  window.pageYOffset
-                            });
+                            _postPositionMessage();
                             break;
-                        case 'monitor-visibility':
-                            // Send initial visibility value
-                            isVisible = _isVisible(message.threshold);
-                            _postMessage({
-                                'type': 'visibility',
-                                'visible': isVisible
-                            });
+                        case 'monitor-position':
+                            // Send initial position
+                            _postPositionMessage(true);
 
-                            // Send updated visibility if and when it changes
+                            // Send updated position on scroll or resize
                             window.addEventListener('scroll', _debounce(function(ev) {
-                                _postMessageOnVisibilityChange(message.threshold);
+                                _postPositionMessage(true);
                             }, 50));
                             window.addEventListener('resize', _debounce(function(ev) {
-                                _postMessageOnVisibilityChange(message.threshold);
+                                _postPositionMessage(true);
                             }, 50));
                             break;
                     }
