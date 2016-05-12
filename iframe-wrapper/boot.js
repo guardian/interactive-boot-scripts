@@ -5,6 +5,19 @@ define([], function () {
             var iframe;
             var link = el.querySelector('a[href]');
 
+            // Calls func on trailing edge of the wait period
+            function _debounce(func, wait) {
+                var timeout;
+                return function() {
+                    var context = this, args = arguments;
+                    var later = function() {
+                        func.apply(context, args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            };
+
             function _postMessage(message) {
                 iframe.contentWindow.postMessage(JSON.stringify(message), '*');
             }
@@ -24,6 +37,22 @@ define([], function () {
 
                     // IE 8 + 9 only support strings
                     var message = JSON.parse(event.data);
+
+                    function _postPositionMessage(subscribe) {
+                        var iframeBox = iframe.getBoundingClientRect();
+                        _postMessage({
+                            'id':           message.id,
+                            'type':         message.type,
+                            'subscribe':    !!subscribe,
+                            'iframeTop':    iframeBox.top,
+                            'iframeRight':  iframeBox.right,
+                            'iframeBottom': iframeBox.bottom,
+                            'iframeLeft':   iframeBox.left,
+                            'innerHeight':  window.innerHeight,
+                            'innerWidth':   window.innerWidth,
+                            'pageYOffset':  window.pageYOffset,
+                        });
+                    }
 
                     // Actions
                     switch (message.type) {
@@ -52,14 +81,19 @@ define([], function () {
                             }, message.id);
                             break;
                         case 'get-position':
-                            _postMessage({
-                                'id':           message.id,
-                                'type':         message.type,
-                                'iframeTop':    iframe.getBoundingClientRect().top,
-                                'innerHeight':  window.innerHeight,
-                                'innerWidth':   window.innerWidth,
-                                'pageYOffset':  window.pageYOffset
-                            });
+                            _postPositionMessage();
+                            break;
+                        case 'monitor-position':
+                            // Send initial position
+                            _postPositionMessage(true);
+
+                            // Send updated position on scroll or resize
+                            window.addEventListener('scroll', _debounce(function(ev) {
+                                _postPositionMessage(true);
+                            }, 50));
+                            window.addEventListener('resize', _debounce(function(ev) {
+                                _postPositionMessage(true);
+                            }, 50));
                             break;
                     }
                 }, false);
