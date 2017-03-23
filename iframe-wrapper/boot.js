@@ -3,6 +3,7 @@ define([], function () {
         boot: function (el, context, config, mediator) {
             // Extract href of the first link in the content, if any
             var iframe;
+            var isVisible;
             var link = el.querySelector('a[href]');
 
             // Calls func on trailing edge of the wait period
@@ -101,6 +102,7 @@ define([], function () {
                 // Replace link with iframe
                 // Note: link is assumed to be a direct child
                 el.replaceChild(iframe, link);
+
             } else {
                 console.warn('iframe-wrapper applied to element without any link');
             }
