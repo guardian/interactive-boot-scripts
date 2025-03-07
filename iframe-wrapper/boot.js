@@ -28,6 +28,7 @@ define([], function () {
                 iframe.style.border = 'none';
                 iframe.height = '500'; // default height
                 iframe.src = link.href;
+                iframe.scrolling = 'no';
 
                 // Listen for requests from the window
                 window.addEventListener('message', function(event) {
